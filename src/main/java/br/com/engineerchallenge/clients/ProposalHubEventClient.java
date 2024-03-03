@@ -17,4 +17,3 @@ public interface ProposalHubEventClient {
             @RequestBody Proposal proposal
     );
 }
-
