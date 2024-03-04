@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.engineerchallenge.contants.ErrorCode;
@@ -20,7 +18,6 @@ import br.com.engineerchallenge.models.ProposalFile;
 import br.com.engineerchallenge.models.ProposalParsingError;
 import br.com.engineerchallenge.utils.FileUtils;
 import br.com.engineerchallenge.validation.FileNameValidation;
-import br.com.engineerchallenge.validation.MandatoryFieldsValidation;
 import br.com.engineerchallenge.validation.Validation;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,19 +39,15 @@ public class ProposalItemProcessor implements ItemProcessor<File, ProposalFile> 
         try {
             String content = FileUtils.getFileContent(movedFile);
             JSONObject jsonObject = new JSONObject(content);
-            JSONObject stAuto = jsonObject.getJSONObject("PROPOSAL");
-            JSONArray data = stAuto.getJSONArray("data");
 
             proposal = new ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
-                    .readValue(data.get(0).toString(), Proposal.class);
+                    .readValue(jsonObject.toString(), Proposal.class);
         } catch (Exception e) {
             return buildJsonFileParserError(movedFile);
         }
 
         ProposalFile proposalFile = new ProposalFile(proposal, movedFile);
-        Validation validationChain = Validation.link(new FileNameValidation(), new MandatoryFieldsValidation());
+        Validation validationChain = Validation.link(new FileNameValidation());
         validationChain.performValidation(proposalFile);
 
         return proposalFile;

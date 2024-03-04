@@ -3,9 +3,10 @@ package br.com.engineerchallenge.validation;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import br.com.engineerchallenge.contants.ErrorCode;
-import br.com.engineerchallenge.contants.Regex;
 import br.com.engineerchallenge.models.ProposalFile;
 import br.com.engineerchallenge.models.ProposalParsingError;
 import br.com.engineerchallenge.utils.FileUtils;
@@ -18,9 +19,12 @@ public class FileNameValidation extends Validation {
         String fileName = proposalFile.getFile().getName();
         log.info("Validando nome do arquivo {}", fileName);
         File file = proposalFile.getFile();
-        if (!fileName.matches(Regex.PROPOSAL_FILE_NAME.getExpression())) {
+        Pattern pattern = Pattern.compile("^[a-z]+\\.+[a-z]+$");
+        Matcher matcher = pattern.matcher(fileName);
+        System.out.println("matcher.find " + matcher.find());
+        if (!matcher.find()) {
             List<String> errorDetailList = new ArrayList<>();
-            errorDetailList.add("O nome do arquivo não está de acordo com o padrão estabelecido: " + Regex.PROPOSAL_FILE_NAME.getExpression());
+            errorDetailList.add("O nome do arquivo não está de acordo com o padrão estabelecido: " + matcher);
 
             ProposalParsingError error = ProposalParsingError.builder()
                     .code(ErrorCode.ERR_01.getDescription())
@@ -37,4 +41,3 @@ public class FileNameValidation extends Validation {
         checkNext(proposalFile);
     }
 }
-

@@ -25,24 +25,8 @@ public class Proposal {
     private Long productId;
 
     @Mandatory
-    @JsonProperty("razaoNomedoProdutor")
-    private String producerName;
-
-    @Mandatory
-    @JsonProperty("sobrenomePaternalProdutor")
-    private String producerPaternalSurname;
-
-    @Mandatory
     @JsonProperty("nacionalidade")
     private String nationality;
-
-    @Mandatory
-    @JsonProperty("rfcprodutor")
-    private String producerRfc;
-
-    @Mandatory
-    @JsonProperty("curpprodutor")
-    private String producerCurp;
 
     @Mandatory
     @JsonProperty("cidade")

@@ -1,9 +1,7 @@
 package br.com.engineerchallenge.validation;
 
 import br.com.engineerchallenge.models.ProposalFile;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public abstract class Validation {
 
     private Validation next;
@@ -25,4 +23,3 @@ public abstract class Validation {
         }
     }
 }
-
