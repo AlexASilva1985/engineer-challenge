@@ -12,10 +12,11 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.engineerchallenge.contants.ErrorCode;
+import br.com.engineerchallenge.exception.ApiException;
+import br.com.engineerchallenge.models.Error;
 import br.com.engineerchallenge.models.Proposal;
 import br.com.engineerchallenge.models.ProposalFile;
-import br.com.engineerchallenge.models.ProposalParsingError;
+import br.com.engineerchallenge.service.SendProposal;
 import br.com.engineerchallenge.utils.FileUtils;
 import br.com.engineerchallenge.validation.FileNameValidation;
 import br.com.engineerchallenge.validation.Validation;
@@ -26,15 +27,17 @@ import lombok.extern.slf4j.Slf4j;
 public class ProposalItemProcessor implements ItemProcessor<File, ProposalFile> {
     @Value("${sftp.directory.processing}")
     private String directoryPath;
-
+    
     public ProposalItemProcessor() {
     }
 
     @Override
-    public ProposalFile process(File file) throws IOException {
+    public ProposalFile process(File file) throws Exception, ApiException {
         log.info("Iniciando processamento do arquivo {}", file.getName());
         File movedFile = moveFileProcessing(file);
         Proposal proposal = null;
+        ProposalFile proposalFile = null;
+        Validation validationChain = null;
 
         try {
             String content = FileUtils.getFileContent(movedFile);
@@ -42,13 +45,17 @@ public class ProposalItemProcessor implements ItemProcessor<File, ProposalFile> 
 
             proposal = new ObjectMapper()
                     .readValue(jsonObject.toString(), Proposal.class);
-        } catch (Exception e) {
-            return buildJsonFileParserError(movedFile);
-        }
 
-        ProposalFile proposalFile = new ProposalFile(proposal, movedFile);
-        Validation validationChain = Validation.link(new FileNameValidation());
+        proposalFile = new ProposalFile(proposal, movedFile);
+        validationChain = Validation.link(new FileNameValidation());
         validationChain.performValidation(proposalFile);
+        
+        SendProposal sendProposal = new SendProposal();
+        sendProposal.postProposal(proposal);
+        
+        } catch (Exception e) {
+        	return buildJsonFileParserError(movedFile);
+        }
 
         return proposalFile;
     }
@@ -57,8 +64,8 @@ public class ProposalItemProcessor implements ItemProcessor<File, ProposalFile> 
         ProposalFile proposalErrorFile = new ProposalFile(null, file);
         List<String> errorDetailList = new ArrayList<>();
         errorDetailList.add("O arquivo não atende a sintaxe json");
-        ProposalParsingError error = ProposalParsingError.builder()
-                .code(ErrorCode.ERR_01.getDescription())
+        Error error = Error.builder()
+                .code("ERRO_O1")
                 .message("Arquivo corrompido e/ou fora do padrão json")
                 .details(errorDetailList)
                 .content(FileUtils.getFileContent(file))
@@ -76,4 +83,3 @@ public class ProposalItemProcessor implements ItemProcessor<File, ProposalFile> 
         return processingFile;
     }
 }
-

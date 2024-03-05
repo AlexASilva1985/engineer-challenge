@@ -14,7 +14,8 @@ import br.com.engineerchallenge.observer.FolderObserver;
 
 @Configuration
 public class MonitorDirectoryConfiguration {
-    @Autowired
+
+	@Autowired
     FolderObserver folderObserver;
 
     @Value("${sftp.directory.received}")

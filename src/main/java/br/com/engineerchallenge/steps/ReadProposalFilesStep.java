@@ -1,9 +1,7 @@
 package br.com.engineerchallenge.steps;
 
-import br.com.engineerchallenge.models.ProposalFile;
-import br.com.engineerchallenge.processors.ProposalItemProcessor;
-import br.com.engineerchallenge.readers.ProposalFileReader;
-import br.com.engineerchallenge.writers.ProposalItemWriter;
+import java.io.File;
+
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -12,7 +10,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.io.File;
+import br.com.engineerchallenge.models.ProposalFile;
+import br.com.engineerchallenge.processors.ProposalItemProcessor;
+import br.com.engineerchallenge.readers.ProposalFileReader;
+import br.com.engineerchallenge.writers.ProposalItemWriter;
 
 @Configuration
 public class ReadProposalFilesStep {
@@ -36,4 +37,3 @@ public class ReadProposalFilesStep {
     }
 
   }
-

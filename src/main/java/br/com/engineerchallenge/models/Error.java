@@ -11,17 +11,16 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class ProposalParsingError implements Serializable {
+public class Error implements Serializable {
     private String code;
     private String message;
     private List<String> details;
-    private Long externalPolicyCode;
+    private Long ProposalCode;
     private String filename;
     private String content;
-
-    public ProposalParsingError() {
+    
+    public Error() {
         details = new ArrayList<>();
     }
 
 }
-

@@ -51,5 +51,13 @@ public class Proposal {
     @Mandatory
     @JsonProperty("email")
     private String email;
+    
+    @Mandatory
+    @JsonProperty("name")
+    private String nome;
+    
+    @Mandatory
+    @JsonProperty("cpf")
+    private String cpf;
 
 }

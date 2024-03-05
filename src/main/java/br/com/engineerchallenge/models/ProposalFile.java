@@ -11,7 +11,7 @@ public class ProposalFile {
     private File file;
 
     @Setter
-    private ProposalParsingError error;
+    private Error error;
 
     public ProposalFile(Proposal proposal, File file) {
         this.proposal = proposal;
