@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class ProposalItemWriter implements ItemWriter<ProposalFile> {
+public class ProposalItemWriter implements ItemWriter<ProposalFile>, CommandLineRunner {
 
     @Value("${sftp.directory.done}")
     private String doneDirectoryPath;
@@ -36,20 +37,22 @@ public class ProposalItemWriter implements ItemWriter<ProposalFile> {
     private String sendSubject;
     
     private SendMailService sendMailService;
+    
+    private File file;
 
     @Override
-    public void write(Chunk<? extends ProposalFile> items) throws IOException {
+    public void write(Chunk<? extends ProposalFile> items) throws Exception {
     	
     	for (ProposalFile item : items) {
             Proposal proposal = item.getProposal();
-            File file = item.getFile();
+            file = item.getFile();
 
             if (item.getError() == null) {
                 String body = new ObjectMapper().writeValueAsString(proposal);
                 log.info("Enviando proposta: " + proposal.getProposalId());
                 log.info("Payload de envio: " + body);
                 moveFileDone(file);
-                sendMailService.senMail(sendMail, sendSubject, file.getName()+ "Procesado com sucesso");
+                run();
             } else {
                 moveFileError(item);
             }
@@ -76,4 +79,10 @@ public class ProposalItemWriter implements ItemWriter<ProposalFile> {
 
         log.info("Criado registro em pasta (error): " + file.getName());
     }
+    
+	@Override
+	public void run(String... args) throws Exception {
+		sendMailService.senMail(sendMail, sendSubject, file.getName()+ "Procesado com sucesso");
+		
+	}
 }

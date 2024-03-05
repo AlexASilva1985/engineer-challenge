@@ -1,20 +1,26 @@
 package br.com.engineerchallenge.service;
 
+import java.io.IOException;
+
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@AllArgsConstructor
-public class SendMailService {
+public abstract class SendMailService{
 	
 		private final JavaMailSender javamailsender;
 		
-		public void senMail(String stTo, String subject, String content) {
+		
+		  public SendMailService(final JavaMailSender javamailsender) {
+		  this.javamailsender = javamailsender;
+		  
+		  }
+		 
+		public void senMail(String stTo, String subject, String content) throws IOException {
 			
 			log.info("Sending Mail");
 			

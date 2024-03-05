@@ -48,4 +48,3 @@ public class ProposalFileReader implements ItemReader<File> {
         }
     }
 }
-

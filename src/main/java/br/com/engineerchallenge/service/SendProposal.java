@@ -22,7 +22,7 @@ public class SendProposal{
 	@Value("${api.url}")
 	private String urlApi;
 
-	public void postProposal(Proposal proposal) throws ApiException {
+	public void postProposal(Proposal proposal) throws Exception {
 
 	try {
 		log.info("Envio da proposta pra gravar na base");

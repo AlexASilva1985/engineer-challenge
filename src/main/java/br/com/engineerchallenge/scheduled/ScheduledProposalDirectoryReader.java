@@ -1,6 +1,7 @@
 package br.com.engineerchallenge.scheduled;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -12,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -44,5 +45,3 @@ public class ScheduledProposalDirectoryReader {
         }
     }
 }
-
-
